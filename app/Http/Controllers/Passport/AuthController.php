@@ -180,6 +180,22 @@ class AuthController extends Controller
 
         $authService = new AuthService($user);
 
+        // 发放首单优惠-优惠券
+        $couponCode = "7YvztU25";
+        $couponName = "超值特惠-2折券";
+        $couponCubject = "恭喜获得限定超值优惠券：" . $couponName;
+        SendEmailJob::dispatch([
+            'email' => $email,
+            'subject' => $couponCubject,
+            'template_name' => 'firstCoupon',
+            'template_value' => [
+                'name' => config('v2board.app_name', 'V2Board'),
+                'couponCode' => $couponCode,
+                'couponName' => $couponName,
+                'url' => config('v2board.app_url')
+            ]
+        ]);
+
         return response()->json([
             'data' => $authService->generateAuthData($request)
         ]);
